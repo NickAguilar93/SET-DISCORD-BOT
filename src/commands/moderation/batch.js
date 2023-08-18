@@ -33,7 +33,8 @@ module.exports = {
       let memberList = msg.guild.roles.cache.get(target.id).members.map(m => m.user.id);
       for(let member in memberList) {
       const memberid = await msg.guild.members.fetch(memberList[member]);
-      // memberid.roles.remove(target.id);
+      //Make sure bot role has permission
+      memberid.roles.remove(target.id);
       memberid.roles.add(selection.id);
       }
     });
