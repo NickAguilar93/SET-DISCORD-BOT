@@ -43,20 +43,19 @@ module.exports = {
           console.log(
             `${target.name} role was removed from ${currentUser.displayName}`
           );
-          currentUser.roles.add(selection.id);
-          currentUser = await msg.guild.members.fetch(memberList[member]);
+          await currentUser.roles.add(selection.id);
           if (currentUser.roles.cache.has(selection.id)) {
             console.log(
-              `${selection.name} role was added to ${currentUser.displayName}`
+              `${selection.name} role was added to ${currentUser.displayName}\n`
             );
           } else {
             console.log(
-              `${selection.name} role was not added to ${currentUser.displayName}`
+              `${selection.name} role was not added to ${currentUser.displayName}\n`
             );
           }
         } else {
           console.log(
-            `${target.name} role was not removed from ${currentUser.displayName}`
+            `${target.name} role was not removed from ${currentUser.displayName}\n`
           );
         }
       }
