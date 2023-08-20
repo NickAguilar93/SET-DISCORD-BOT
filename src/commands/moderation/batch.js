@@ -1,5 +1,10 @@
 require("dotenv").config();
-const { Client, IntentsBitField, PermissionFlagsBits } = require("discord.js");
+const {
+  Client,
+  IntentsBitField,
+  PermissionFlagsBits,
+  GatewayIntentBits,
+} = require("discord.js");
 const { SlashCommandBuilder } = require("discord.js");
 
 const client = new Client({
@@ -8,6 +13,7 @@ const client = new Client({
     IntentsBitField.Flags.GuildMembers,
     IntentsBitField.Flags.GuildMessages,
     IntentsBitField.Flags.MessageContent,
+    GatewayIntentBits.GuildMembers,
   ],
 });
 
@@ -27,39 +33,25 @@ module.exports = {
     .setDefaultMemberPermissions(PermissionFlagsBits.ManageRoles),
 
   async execute(interaction) {
-    const target = interaction.options.getRole("role1");
-    const selection = interaction.options.getRole("role2");
+    const targetRole = interaction.options.getRole("role1");
+    const desiredRole = interaction.options.getRole("role2");
+    let list = client.guilds.cache.get(process.env.GUILD_ID);
 
-    client.on("messageCreate", async (msg) => {
-      let memberList = msg.guild.roles.cache
-        .get(target.id)
-        .members.map((m) => m.user.id);
-      for (let member in memberList) {
-        let currentUser = await msg.guild.members.fetch(memberList[member]);
-        if (currentUser.roles.cache.has(target.id)) {
-          await currentUser.roles.remove(target.id);
-        }
-        if (!currentUser.roles.cache.has(target.id)) {
-          console.log(
-            `${target.name} role was removed from ${currentUser.displayName}`
-          );
-          await currentUser.roles.add(selection.id);
-          if (currentUser.roles.cache.has(selection.id)) {
-            console.log(
-              `${selection.name} role was added to ${currentUser.displayName}\n`
-            );
-          } else {
-            console.log(
-              `${selection.name} role was not added to ${currentUser.displayName}\n`
-            );
-          }
-        } else {
-          console.log(
-            `${target.name} role was not removed from ${currentUser.displayName}\n`
-          );
-        }
-      }
-    });
+    try {
+      await list.members.fetch();
+
+      let membersInRole = list.roles.cache
+        .get(targetRole.id)
+        .members.map((m) => m);
+
+      membersInRole.forEach(async (element) => {
+        await element.roles.remove(targetRole.id);
+        await element.roles.add(desiredRole.id);
+      });
+      // console.log(role1);
+    } catch (err) {
+      console.error(err);
+    }
     await interaction.reply("Done!");
   },
 };
