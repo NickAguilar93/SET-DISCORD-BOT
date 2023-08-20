@@ -35,35 +35,55 @@ module.exports = {
         .get(target.id)
         .members.map((m) => m.user.id);
       for (let member in memberList) {
-        const memberid = await msg.guild.members.fetch(memberList[member]);
-        //Make sure bot role has permission
-        console.log(`\nWorking on User ${memberid.displayName}`);
-        await memberid.roles.remove(target.id).then(memberid.roles.add(selection.id));
-        if (!memberid.roles.cache.has(target)) {
-          console.log(
-            `Role ${target.name} was successfully removed from user ${memberid.displayName}`
-          );
-        } else {
-          console.log(
-            `Role ${target.name} was not removed from user ${memberid.displayName}`
-          );
-        }
-        
-        if (memberid.roles.cache.has(selection)) {
-          console.log(
-            `Role ${selection.name} was successfully added to user ${memberid.displayName}`
-          );
-        } else {
-          console.log(
-            `Role ${selection.name} was not added to user ${memberid.displayName}`
-          );
-        }
-
-        // if (memberid.roles.remove(target.id)) {
-        //   console.log(`User ${memberid.displayName} was successfully changed to ${selection.name}`);
+        // const memberid = await msg.guild.members.fetch(memberList[member]);
+        // //Make sure bot role has permission
+        // console.log(`\nWorking on User ${memberid.displayName}`);
+        // await memberid.roles.remove(target.id).then(memberid.roles.add(selection.id));
+        // const user = await msg.guild.members.fetch({user:memberid, force:true});
+        // console.log(user);
+        // if (user.role) {
+        //   console.log(
+        //     `Role ${selection.name} was successfully added to user ${user.displayName}`
+        //   );
         // } else {
-        //   console.log(`User ${memberid.displayName} change to ${selection.name} has failed`);
+        //   console.log(
+        //     `Role ${selection.name} was not added to user ${user.displayName}`
+        //   );
         // }
+
+        // if (!user.roles.cache.has(target.id)) {
+        //   console.log(
+        //     `Role ${target.name} was successfully removed from user ${user.displayName}`
+        //   );
+        // } else {
+        //   console.log(
+        //     `Role ${target.name} was not removed from user ${user.displayName}`
+        //   );
+        // }
+        let currentUser = await msg.guild.members.fetch(memberList[member]);
+        if (currentUser.roles.cache.has(target.id)) {
+          await currentUser.roles.remove(target.id);
+        }
+        if (!currentUser.roles.cache.has(target.id)) {
+          console.log(
+            `${target.name} role was removed from ${currentUser.displayName}`
+          );
+          currentUser.roles.add(selection.id);
+          currentUser = await msg.guild.members.fetch(memberList[member]);
+          if (currentUser.roles.cache.has(selection.id)) {
+            console.log(
+              `${selection.name} role was added to ${currentUser.displayName}`
+            );
+          } else {
+            console.log(
+              `${selection.name} role was not added to ${currentUser.displayName}`
+            );
+          }
+        } else {
+          console.log(
+            `${target.name} role was not removed from ${currentUser.displayName}`
+          );
+        }
       }
     });
     await interaction.reply("Done!");
