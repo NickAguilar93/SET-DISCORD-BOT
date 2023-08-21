@@ -6,7 +6,7 @@ const {
   GatewayIntentBits,
 } = require("discord.js");
 const { SlashCommandBuilder } = require("discord.js");
-
+const wait = require('node:timers/promises').setTimeout;
 const client = new Client({
   intents: [
     IntentsBitField.Flags.Guilds,
@@ -43,7 +43,7 @@ module.exports = {
         description: "",
       },
     ];
-    
+
     let list = client.guilds.cache.get(clientID);
 
     try {
@@ -55,15 +55,16 @@ module.exports = {
 
       membersInRole.forEach(async (element) => {
         await element.roles.remove(targetRole.id);
+
         await element.roles.add(desiredRole.id);
 
-        if (element.roles.cache.has(targetRole.id)) {
+        if (await element.roles.cache.has(targetRole.id)) {
           errorList.push({
             name: element.displayName,
             description: "role was not removed",
           });
           errorCounter++;
-        } else if (!element.roles.cache.has(desiredRole.id)) {
+        } else if (await !element.roles.cache.has(desiredRole.id)) {
           errorList.push({
             name: element.displayName,
             description: "role was not added",
@@ -71,18 +72,23 @@ module.exports = {
           errorCounter++;
         }
       });
-      // console.log(role1);
+
     } catch (err) {
       console.error(err);
     }
 
     if (errorCounter > 0) {
-      errorList.forEach(element => {
-        console.log(`User: ${element.name} ${description}`);
-      })
+      errorList.forEach(async (element) => {
+        await console.log(`User: ${element.name} ${description}`);
+      });
     }
 
-    await interaction.reply(`${errorCounter} errors occured`);
+    await interaction.deferReply("Processing");
+    await wait(60000);
+    await interaction.editReply({
+      content: `${errorCounter} errors occured`,
+      ephemeral: true,
+    })
   },
 };
 client.login(process.env.TOKEN);
