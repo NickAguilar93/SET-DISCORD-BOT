@@ -84,7 +84,7 @@ module.exports = {
     }
 
     await interaction.deferReply("Processing");
-    await wait(60000);
+    await wait(1200);
     await interaction.editReply({
       content: `${errorCounter} errors occured`,
       ephemeral: true,
