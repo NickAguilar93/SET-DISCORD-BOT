@@ -3,7 +3,6 @@ const {
   Client,
   IntentsBitField,
   PermissionFlagsBits,
-  GatewayIntentBits,
 } = require("discord.js");
 const { SlashCommandBuilder } = require("discord.js");
 const wait = require('node:timers/promises').setTimeout;
@@ -13,7 +12,6 @@ const client = new Client({
     IntentsBitField.Flags.GuildMembers,
     IntentsBitField.Flags.GuildMessages,
     IntentsBitField.Flags.MessageContent,
-    GatewayIntentBits.GuildMembers,
   ],
 });
 
