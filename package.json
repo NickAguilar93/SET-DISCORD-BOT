@@ -10,9 +10,10 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "discord.js": "^14.12.1",
+    "discord.js": "^14.15.3",
     "dotenv": "^16.3.1",
-    "undici": ">=6.11.1"
+    "node-fetch": "^3.3.2",
+    "undici": "^6.19.2"
   },
   "devDependencies": {
     "eslint": "^8.47.0"
